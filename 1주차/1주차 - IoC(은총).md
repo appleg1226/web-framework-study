@@ -90,7 +90,7 @@ ApplicationContext에서는 IoC 컨테이너의 Initiating, Configuring, Assembl
 
 
 ## 4. Dependencies
-- 생성자 주입 vs setter 주입
+- 생성자 주입 vs setter 주입  
 Spring 팀의 추천은 생성자 주입을 하는 것이다.
 이는 객체를 불변으로 만들 수도 있고, 의존성의 null도 방지한다. 
 또한 항상 초기화된 객체를 반환한다.
