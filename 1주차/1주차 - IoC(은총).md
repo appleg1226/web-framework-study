@@ -161,7 +161,7 @@ setter에 지정된 @Autowired 파라미터에 Optional<T>이나 @Nullable 옵�
 6) @Qualifier 어노테이션을 이용하여 새로운 어노테이션을 만들어 기능을 대신할 수 있다.
 7) @Autowired는 내부 Generic도 구분을 해서 가져올 수 있다.
 Info<Person>은 @Autowired Info<Person> 에 주입되고, @Autowired Info<Animal> 에는 주입되지 않는다.
-8) @Value는 properties에 있는 값들을 주입해주는데, Spring boot에서는 *PropertySourcesPlaceholderConfigurer*가 이 일을 담당한다.
+8) @Value는 properties에 있는 값들을 주입해주는데, Spring boot에서는 *PropertySourcesPlaceholderConfigurer* 가 이 일을 담당한다.
 
 
 ## 10. Classpath Scanning and Managed Components
@@ -212,11 +212,8 @@ https://thswave.github.io/spring/2015/02/02/spring-mvc-annotaion.html
 - @Configuration과 @Component는 둘 다 내부에 @Bean을 선언이 가능하기는 하다. 
 그러나 @Configuration 내부의 @Bean들 끼리는 서로 간의 의존성을 주입할 수 있다.
 반면, @Component에서는 그게 안 된다. 그래서 버그 방지를 위해서 웬만하면 @Bean은 @Configuration 내부에 선언하는 것이 좋다.
-<br/>
-- Java-based Configuration 방식에서는 *AnnotationConfigApplicationContext* 이 메인으로 사용된다.(ApplicationContext의 하위 구현체)
-<br/>
-- 웹을 사용할 때는 *AnnotationConfigWebApplicationContext* 을 같이 사용한다.
-<br/>
+- Java-based Configuration 방식에서는 <i>AnnotationConfigApplicationContext</i> 이 메인으로 사용된다.(ApplicationContext의 하위 구현체)    
+- 웹을 사용할 때는 <i>AnnotationConfigWebApplicationContext</i> 을 같이 사용한다.
 - Bean끼리 의존성이 있을 때 Configuration에서는 내부적으로 Singleton을 여러개 생성해준다.
   
 ```
