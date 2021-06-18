@@ -15,24 +15,23 @@
 <br/>
 
 ## 3. 예상 일정
-### 1. Spring Core 문서 읽고 정리 (2~3주)
+### 1. Spring Core 문서 읽고 정리 (2주)
 - https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans
 
-### 2. Spring Core 부분 코드 분석(2~3주)
+### 2. Spring Core 부분 코드 분석(1주)
 코드를 읽으면서 클래스 디자인, 코딩 스타일, 사용된 문법 정리하기
 - org.springframework.beans
 - org.springframework.context
 
-### 3. Servlet 등 http 서버 라이브러리/프레임워크 공부(2~3주)
-  
-### 4. Spring Web MVC 문서 읽고 정리(2~3주)
+### 3. Spring Web MVC 문서 읽고 정리(1주)
 - https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc
 
-### 5. Spring Web MVC 코드 분석(2~3주)
-- org.springframework.web
+### 4. Servlet, Spring Web(Webflux), Reactor 등 웹 관련 라이브러리/프레임워크 코드 분석(2주)
 
-### 6. Spring Boot 문서 읽고 정리(2~3주)
+### 5. Spring Boot 문서 읽고 정리(1주)
 - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#legal
+
+### 6. Spring Boot 코드 분석(1주)
 
 ### 7. 웹 프레임워크 개발 준비(2~3주)
 - 다양한 웹 프레임워크 구현 방식 스터디(Java의 Armeria, Kotlin의 Ktor, Node의 Nest.js, Golang의 gin 등)
