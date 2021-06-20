@@ -1,3 +1,27 @@
+# Resources 
+
+- Spring’s Resource interface located in the org.springframework.core.io. package is meant to be a more capable interface for abstracting access to low-level resources. 
+- 
+
+https://yangbox.tistory.com/21
+
+
+
+#  Validation, Data Binding, and Type Conversion
+
+- org.springframework.validation.Validator 인터페이스 기반
+ - 객체 검증을 위해 추상화한 인터페이스
+ - supports() , validate()
+ 
+- 커스텀 validator를 쓸수 있지만, 
+ 보통은 스프링에 자동 등록되는 아래 빈으로 처리 (스프링부트에서 자동으로 빈 등록해줌)
+ 
+LocalValidatorFactoryBean
+ex @Nonnull ...
+
+
+
+
 # AOP
 
 
