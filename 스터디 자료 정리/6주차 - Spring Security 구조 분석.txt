@@ -1,0 +1,107 @@
+Spring Security
+
+- Security의 의미
+Security 모듈의 의미는 보통 어플리케이션을 안전하게 사용할 수 있도록 하는 것이다.
+어플리케이션을 안전하게 한다는 것은 
+비밀번호나 전용키 등의 것들을 이용하여 접근을 통제하기도 하며,
+사용자의 신분이 유저, 관리자 등 어떠느냐에 따라서 제한된 권한을 주기도 하는 그런 과정들을 말한다.
+
+- 대략 어떤 기술들이 사용되는가
+애초에 이 Security 모듈은 웹 요청으로부터 내부 자원을 안전하게 제공하기 위한 모듈이다.
+그렇기 때문에 security 기술은 웹 요청을 처리하는 과정 중에 포함되고는 한다.
+보통 Filter라고 하는 기술이 사용이 되는데,
+간단하게 말하자면 요청을 실제로 처리하기 전에 미리 받아서 그 내용을 읽어보고 필요한 action을 취하는 방식이다.
+
+- 다른 언어와의 비교
+다른 언어도 Spring Security와 방법이 크게 다르지는 않다.
+Express.js는 middleware라는 기술을 활용하여 웹 요청을 Pipeline화 해서 사용할 수가 있게 된다.
+대충 그림으로 그리면 이런 상태이다.
+
+대부분의 프레임워크들이 이러한 구조라는 것을 알고 들어가면 일단은 큰 그림을 그리는 것은 성공이다.
+다만, 내부 구현이 스프링은 다른 프레임워크들에 비해서 복잡하기 때문에 좀 더 알아볼 것이 많다.
+
+- 대략적인 그림
+Spring Web은 일반적으로 Servlet과 함께 동작한다.
+웹 요청은 Servlet의 DispatcherServlet을 중심으로 동작하는데 이 Security 기능은 그 중간 어딘가 쯤에 위치한다.
+Security 기능은 Filter를 통해서 구현되기 때문에 아래의 Filter Chain 부분이 Spring Security의 자리가 된다. 
+
+(Client) -> (Tomcat) -> (Filter Chain: Spring Security) -> (DispatcherServlet)
+
+서버에 웹 요청이 들어오면 그 시작은 스프링이 아니다. 
+Tomcat의 요청을 받는 부분이 존재하고, 거기에서 스프링에 요청 내용을 전달하는 형태라고 보는 게 가깝다.
+
+DispatcherServlet 은 Tomcat에서 사용할 수 있게 공통된 인터페이스로 구현되어 있다. 그래서 Tomcat에서 이 서블릿을 사용한다.
+
+Spring Security 또한 마찬가지로 Tomcat에서 사용할 수 있도록 공통된 인터페이스로 구현이 되어 있다. 
+그러면 Tomcat에서 Spring Security에서 제공하는 클래스를 읽어와서 본인의 필터로 등록을 하게 된다. 
+
+스프링에서 제공하는 이 필터의 구현체가 DelegatingFilterProxy 라는 클래스이다.
+Tomcat에서 받은 요청은 모두 이 DelegatingFilterProxy를 거친 다음 Servlet으로 들어가게 된다.
+
+이 DelegatingFilterProxy는 엄격하게 따지면 스프링의 것이 아니라 Tomcat에게 스프링이 사용해달라고 바친 Filter이다.
+만들어서 바치면 Tomcat에서는 이 필터를 자신의 필터처럼 사용하게 된다.
+
+그러나 DelegatingFilterProxy에서 직접적으로 하는 일은 많지가 않다.
+이 Filter는 스프링의 것이 아니기 때문에, 스프링만의 사정을 알고 있는 필터가 따로 필요하다.
+
+그것이 FilterChainProxy라는 클래스이다.
+이 FilterChainProxy는 Spring Context에 접근할 수 있기 때문에 다양한 Spring Bean Filter들을 가져올 수가 있다. 
+
+그렇다면 이 FilterChainProxy는 무슨일을 하는가.
+이제 본격적으로 스프링의 방식으로 Filter들을 구성할 수가 있게 된다.
+내가 원하는 url 이 있다면 그에 따라서 어떤 Filter들을 사용할지를 정할 수가 있다.
+이것들을 Spring에서는 SecurityFilterChain이라고 부른다.
+
+Tomcat이 겉에서 보기에는 하나의 DelegatingFilterProxy 뿐이지만,
+내부적으로 FilterChainProxy 가 여러개의 필터들을 가지고 있고, 실제적인 일이 여기에서 일어난다. 
+
+이제 여기까지가 구조의 거의 끝이다.
+유저의 Request는 각 SecurityFilterChain에 등록되어 있는 다양한 필터들을 헤쳐나가고,
+결국 여기서 살아남은 요청만이 Servlet까지 다다르게 된다.
+
+대충 구체적 필터의 이름을 몇 가지 나열해보자면 이런 것들이 있고, 이외에도 
+수많은 필터들이 존재한다. 게다가 필요하다면 커스텀 필터를 제작하여 등록할 수도 있다.
+- CorsFilter(CORS를 담당)
+- UsernamePasswordAuthenticationFilter(Authentication을 담당)
+- BasicAuthenticationFilter(Authentication을 담당)
+- RememberMeAuthenticationFilter(Session, Cookie쪽을 담당)
+- FilterSecurityInterceptor(Authorization을 담당)
+
+
+추가로 FilterChianProxy에서 필터들을 동작시키는 방식이 다소 재미있어서 좀 정리해 보려고 한다.
+필터의 호출이 재귀적으로 이루어 진다는 점이 재미가 있다.
+1) 우선 필터들을 하나의 List에 저장해둔다.
+List<Filter> filterList = new ArrayList<>();
+
+2) 현재 참조하고 있는 필터의 인덱스를 저장하도록 count를 하나 선언한다.
+int count = 0;
+
+3) 재귀적으로 필터를 계속 호출한다. 모든 필터들이 내부에 doFilter를 구현하였고 이 클래스를 사용하도록 구현이 되어있다.
+세번째 매개변수로 들어간 this를 내부적으로 사용하여 다시 이 클래스로 돌아와 저 count를 추가시켜 다음 필터를 사용하게 되어있다.
+doFilter(request, response){
+	count++;
+	Filter nowFilter = filterList.get(count);
+	nowFilter.doFilter(request, response, this);    // this는 현재 메서드를 호출하는 클래스
+}
+
+사실 이 글 만으로는 정확하게 설명하기는 힘든 것 같다. 
+필터들의 내부 구현이 각각 다르고, 코드가 단순하게 몇 줄로 설명하기에는 복잡하다.
+Debugger를 찍어서 한줄한줄 읽어보면 금방 알 수 있을 것이다.
+
+다만 실제 함수 호출을 이렇게 재귀로 구현하는 방식을 실제 코드에서는 처음 봐서 재귀의 쓸모에 대해서 잠시 느끼게 되었다. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
